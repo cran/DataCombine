@@ -1,0 +1,16 @@
+Version 0.1.3
+
+Added `DropNA` to drop observations in a data frame with missing values for given variables.
+
+
+Version 0.1.2
+
+Stop message for `MoveFront` when variable does not exists. Other minor documentation changes.
+
+Version 0.1.1 
+
+Minor update to `FillIn` for data.frame 1.8.8.
+
+Version 0.1
+
+First version including the `FillIn` and `MoveFront` commands.
