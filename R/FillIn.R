@@ -8,6 +8,7 @@
 #' @param Var2 an optional character string of variable name in \code{D2} that you would like to use to fill in.
 #' @param KeyVar a character vector of variable names that are shared by \code{D1} and \code{D2} that can be used to join the data frames.
 #' @param allow.cartesian logical. See the \code{\link{data.table}} documentation for more details.
+#' @param KeepD2Vars logical, indicating whether or not to keep the variables from D2 in the output data frame. The default is \code{KeepD2Vars = FALSE}. Hint: avoid having variables in your \code{D2} data frame that share names with variables in \code{D1} other than the \code{KeyVar}s 
 #' 
 #' @examples 
 #' # Create data set with missing values
@@ -16,17 +17,19 @@
 #'                    fNA = sample(c(100, 200, 300, 400, NA), 100, rep = TRUE))
 #'
 #' # Created full data set
-#' fillDF <- data.frame(a = c(1,2,1,2), 
-#'                      b = c(3,3,4,4),
+#' fillDF <- data.frame(a = c(1, 2, 1, 2), 
+#'                      b = c(3, 3, 4, 4),
+#'                      j = c(5, 5, 5, 5),
 #'                      fFull = c(100, 200, 300, 400))
 #'
 #' # Fill in missing f's from naDF with values from fillDF
-#' FilledInData <- FillIn(naDF, fillDF, Var1 = "fNA", Var2 = "fFull", KeyVar = c("a", "b"))
+#' FilledInData <- FillIn(naDF, fillDF, Var1 = "fNA", 
+#'                        Var2 = "fFull", KeyVar = c("a", "b"))
 #'
 #' @import data.table
 #' @export
 
-FillIn <- function(D1, D2, Var1 = NULL, Var2 = NULL, KeyVar = c("iso2c", "year"), allow.cartesian = FALSE)
+FillIn <- function(D1, D2, Var1 = NULL, Var2 = NULL, KeyVar = c("iso2c", "year"), allow.cartesian = FALSE, KeepD2Vars = FALSE)
 {
   VarGen = VarGen.1 = NULL
 
@@ -46,7 +49,7 @@ FillIn <- function(D1, D2, Var1 = NULL, Var2 = NULL, KeyVar = c("iso2c", "year")
   D2Temp <- data.table::data.table(D2, key = KeyVar)
   
   # Merge data.tables
-  OutDT <- D2Temp[D1Temp]
+  OutDT <- D2Temp[D1Temp, allow.cartesian = allow.cartesian]
   
   # Tell the user how many values will be filled in
   SubNA <- OutDT[, list(VarGen, VarGen.1)]
@@ -60,14 +63,22 @@ FillIn <- function(D1, D2, Var1 = NULL, Var2 = NULL, KeyVar = c("iso2c", "year")
   OutDF <- data.frame(OutDT)
   
   # Tell the user what the correlation coefficient is between the variables
-  SubNoNA <- subset(OutDF, !is.na(VarGen) & !is.na(VarGen.1))
-  HowMany <- nrow(SubNoNA)
-  CORR <- cor(SubNoNA$VarGen, SubNoNA$VarGen.1, use = "complete.obs")
-  print(paste("The correlation between", Var1, "and", Var2, "is", round(CORR, digits = 3), "based on", HowMany, "shared observations." ))
+  if (is.numeric(OutDT$VarGen)){
+    SubNoNA <- subset(OutDF, !is.na(VarGen) & !is.na(VarGen.1))
+    HowMany <- nrow(SubNoNA)
+    CORR <- cor(SubNoNA$VarGen, SubNoNA$VarGen.1, use = "complete.obs")
+    print(paste("The correlation between", Var1, "and", Var2, "is", round(CORR, digits = 3), "based on", HowMany, "shared observations." ))
+  }
+  
+  names(OutDF)[match("VarGen", names(OutDF))] <- Var1
   
   # Remove uncombined variable and return main variable's name
-  names(OutDF)[match("VarGen", names(OutDF))] <- Var1
-  Keepers <- setdiff(names(OutDF), "VarGen.1")
-  OutDF <- OutDF[, Keepers]
+  if (!isTRUE(KeepD2Vars)){
+    D2Vars <- names(D2)
+    Droppers <- setdiff(D2Vars, names(D1))
+    Droppers <- c(VarGen.1, Droppers)
+    Keepers <- setdiff(names(OutDF), Droppers)
+    OutDF <- OutDF[, Keepers]
+  }
   OutDF
 }
