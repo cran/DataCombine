@@ -19,10 +19,13 @@
 #' @export
 
 rmExcept <- function(keepers, envir = globalenv(), message = TRUE){
+  if (class(keepers) != 'character'){
+    stop('The keepers argument must be a character vector.', call. = FALSE)
+  }
   DeleteObj <- setdiff(ls(envir = envir), keepers)
   rm(list = DeleteObj, envir = envir)
   if (isTRUE(message)){
-    message(paste("Removed the following objects:"))
+    message("Removed the following objects:\n")
     message(paste(DeleteObj, collapse = ", "))
   }
 } 
@@ -84,10 +87,15 @@ grepl.sub <- function(data, patterns, Var, keep.found = TRUE, useBytes = TRUE){
 #' 
 #' @export
 
-FindReplace <- function(data, Var, replaceData, from, to, exact = TRUE, vector = FALSE){
+FindReplace <- function(data, Var, replaceData, from = 'from', to = 'to', exact = TRUE, vector = FALSE){
   if(!(class(data[, Var]) %in% c('character', 'factor'))){
-    stop(paste(Var, 'is not a character string or factor. Please convert to a character string or factor and then rerun.'))
+    stop(paste(Var, 'is not a character string or factor. Please convert to a character string or factor and then rerun.'),
+         call. = FALSE)
   }
+  if (isTRUE(exact)){
+    message('Only exact matches will be replaced.')
+  }
+  
   ReplaceNRows <- nrow(replaceData)
   
   for (i in 1:ReplaceNRows){

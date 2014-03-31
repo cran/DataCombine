@@ -3,9 +3,9 @@ DataCombine
 
 ### Christopher Gandrud
 
-### Version 0.1.17
+### Version 0.1.23 [![Build Status](https://travis-ci.org/christophergandrud/DataCombine.png)](https://travis-ci.org/christophergandrud/DataCombine)
 
-### Please report any bugs or suggestions for improvement at: <https://github.com/christophergandrud/DataCombine/issues>.
+### Please report any bugs or suggestions at: <https://github.com/christophergandrud/DataCombine/issues>.
 
 ---
 
@@ -23,11 +23,19 @@ DataCombine
 
 - `MoveFront`: moves variables to the front of a data frame. This can be useful if you have a data frame with many variables and want to move a variable or variables to the front.
 
+- `NaVar`: create new variable(s) indicating if there are missing values in other variable(s).
+
 - `PercChange`: calculates the percentage change from a specified lag, including within groups.
 
-- `shift`: creates lag and lead variables, including for time-series cross-sectional data. The shifted variable is returned to a new vector. This function is largely based on TszKin Julian's `shift` function: <http://ctszkin.com/2012/03/11/generating-a-laglead-variables/>.
+- `shift`: creates lag and lead variables, including for time-series cross-sectional data. The shifted variable is returned to a new vector. This function is largely based on [TszKin Julian's shift function](http://ctszkin.com/2012/03/11/generating-a-laglead-variables/).
 
 - `slide`: creates lag and lead variables, including for time-series cross-sectional data. The slid variable are added to the original data frame. This expands the capabilities of `shift`.
+
+- `slideMA`: creates a moving average for a period before or after each time point for a given variable.
+
+- `SpreadDummy`: spread a dummy variable (1's and 0') over a specified time period and for specified groups.
+
+- `StartEnd`: finds the starting and ending time points of a spell, including for time-series cross-sectional data.
 
 - `rmExcept`: removes all objects from a workspace except those specified by the user.
 
@@ -49,6 +57,6 @@ I will continue to add to the package as I build data sets and run across other 
 
 You can also install the most recent stable version with `install_github` from the [devtools](https://github.com/hadley/devtools):
 
-```
-devtools::install_github("DataCombine", "christophergandrud")
+```{S}
+devtools::install_github('christophergandrud/DataCombine')
 ```
