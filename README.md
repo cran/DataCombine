@@ -3,13 +3,16 @@ DataCombine
 
 Christopher Gandrud
 
-Version 0.1.26 [![Build Status](https://travis-ci.org/christophergandrud/DataCombine.png)](https://travis-ci.org/christophergandrud/DataCombine)
+Version 0.2.1 [![Build Status](https://travis-ci.org/christophergandrud/DataCombine.png)](https://travis-ci.org/christophergandrud/DataCombine)
 
-### Please report any bugs or suggestions at: <https://github.com/christophergandrud/DataCombine/issues>.
+Please report any **bugs** or **suggestions** at: <https://github.com/christophergandrud/DataCombine/issues>.
 
 ## Motivation and Functions
 
 **DataCombine** is a set of miscellaneous tools intended to make combining data sets--especially time-series cross-section data--easier. The package is continually being developed as I turn lines of code that I frequently use into single functions. It currently includes the following functions:
+
+- `CountSpell`: function that returns a variable counting the spell number
+for an observation. Works with grouped data.
 
 - `dMerge`: merges 2 data frames and report/drop/keeps only duplicates.
 
@@ -47,12 +50,12 @@ Version 0.1.26 [![Build Status](https://travis-ci.org/christophergandrud/DataCom
 
 ## Updates
 
-I will continue to add to the package as I build data sets and run across other 
+I will continue to add to the package as I build data sets and run across other
 pesky tasks I do repeatedly that would be simpler if they were a function.
 
 ## Installation
 
-**DataCombine** is on [CRAN](http://cran.r-project.org/). 
+**DataCombine** is on [CRAN](http://cran.r-project.org/).
 
 You can also install the most recent stable version with `install_github` from the [devtools](https://github.com/hadley/devtools):
 
