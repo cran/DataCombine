@@ -1,3 +1,31 @@
+## Version 0.2.7
+
+Fixed a bug in `slide` when there are invalid sliding values.
+
+### Version 0.2.6
+
+- Fixed a misspelling in the `CountSpell` documentation. Thanks to
+Sascha Schuster.
+
+### Version 0.2.5
+
+- Minor error handling improvements to `grepl.sub`.
+
+### Version 0.2.4
+
+- Added `FillDown` a function that fills in missing (NA) values with the previous
+on-missing value.
+
+- Internal code formating improvements.
+
+### Version 0.2.3
+
+- `keepInvalid` argument added to `slide`. This allows the user to specify
+whether or not to keep observations for groups for which no valid lag/lead can
+be created due to an insufficient number of time points. If TRUE then these
+groups are returned to the bottom of the data frame and NA is given for their
+new lag/lead variable value.
+
 ### Version 0.2.2
 
 Minor internal improvement where slide (and associated functions) return only

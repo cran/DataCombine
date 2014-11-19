@@ -17,22 +17,33 @@
 #' @param slideBy numeric value specifying how many rows (time units) to shift
 #' the data by. Negative values slide the data down--lag the data. Positive
 #' values shift the data up--lead the data.
+#' @param keepInvalid logical. Whether or not to keep observations for groups for
+#' which no valid lag/lead can be created due to an insufficient number of time
+#' period observations. If \code{TRUE} then these groups are returned to the
+#' bottom of the data frame and \code{NA} is given for their new lag/lead
+#' variable value.
 #' @param reminder logical. Whether or not to remind you to order your data by
 #' the \code{GroupVar} and time variable before running \code{slide}, plus other
 #' messages.
 #'
-#'  @examples
-#'  # Create dummy data
-#'  A <- B <- C <- sample(1:20, size = 20, replace = TRUE)
-#'  ID <- sort(rep(seq(1:4), 5))
-#'  Data <- data.frame(ID, A, B, C)
+#' @examples
+#' # Create dummy data
+#' A <- B <- C <- sample(1:20, size = 20, replace = TRUE)
+#' ID <- sort(rep(seq(1:4), 5))
+#' Data <- data.frame(ID, A, B, C)
 #'
-#'  # Lead the variable by two time units
-#'  DataSlid1 <- slide(Data, Var = "A", NewVar = "ALead", slideBy = 2)
+#' # Lead the variable by two time units
+#' DataSlid1 <- slide(Data, Var = "A", NewVar = "ALead", slideBy = 2)
 #'
-#'  # Lag the variable one time unit by ID group
-#'  DataSlid2 <- slide(data = Data, Var = "B", GroupVar = "ID",
+#' # Lag the variable one time unit by ID group
+#' DataSlid2 <- slide(data = Data, Var = "B", GroupVar = "ID",
 #'                 NewVar = "BLag", slideBy = -1)
+#'
+#' # Lag the variable one time unit by ID group, with invalid lags
+#' Data <- Data[1:16, ]
+#'
+#' DataSlid3 <- slide(data = Data, Var = "B", GroupVar = "ID",
+#'                  NewVar = "BLag", slideBy = -2, keepInvalid = TRUE)
 #'
 #' @return a data frame
 #'
@@ -50,13 +61,13 @@
 #' \url{http://ctszkin.com/2012/03/11/generating-a-laglead-variables/}
 #'
 #'
-#' @importFrom dplyr group_by summarize mutate ungroup
+#' @importFrom dplyr group_by group_by_ summarize mutate ungroup
 #' @export
 
 slide <- function(data, Var, GroupVar = NULL, NewVar = NULL, slideBy = -1,
-                  reminder = TRUE)
+                  keepInvalid = FALSE, reminder = TRUE)
 {
-    fake <- total <- NULL
+    fake <- total <- FullData <- NULL
 
     # Determine if Var exists in data
     DataNames <- names(data)
@@ -72,6 +83,12 @@ slide <- function(data, Var, GroupVar = NULL, NewVar = NULL, slideBy = -1,
     if (is.null(NewVar)){
         NewVar <- paste0(Var, slideBy)
     }
+
+    # Logically valid argument pairs
+    if (isTRUE(keepInvalid) & is.null(GroupVar)){
+            warning('keepInvalid set to FALSE when GroupVar = NULL')
+            keepInvalid <- FALSE
+        }
 
     # Give messages
     if (isTRUE(reminder)){
@@ -94,19 +111,44 @@ slide <- function(data, Var, GroupVar = NULL, NewVar = NULL, slideBy = -1,
 
     # Drop if there are not enough observations per group to slide
     if (!is.null(GroupVar)){
-        data <- eval(parse(text = paste0('group_by(data, ', GroupVar, ')')))
+        data <- group_by_(data, .dots = GroupVar)
         data$fake <- 1
         Minimum <- abs(slideBy) - 1
         Summed <- dplyr::mutate(data, total = sum(fake))
         SubSummed <- subset(Summed, total <= Minimum)
-        if (nrow(SubSummed) > 0){
-            Dropping <- unique(SubSummed[, GroupVar])
-            data <- data[!(data[, GroupVar] %in% Dropping), ]
-            message(paste0('\nWarning: the following groups have ', Minimum,
-                          ' or fewer observations.\nNo reasonable lag/lead can be created, so they are dropped:\n'))
-            message(paste(Dropping, collapse = "\n"))
+        data <- VarDrop(data, 'fake')
+        if (nrow(SubSummed) == 0) {
+            FullData <- NULL
         }
-    data <- VarDrop(data, 'fake')
+        else if (nrow(SubSummed) > 0){
+            ## Hack
+            FullData <- data
+            class(FullData) <- 'data.frame'
+            ## End Hack
+
+            Dropping <- unique(SubSummed[, GroupVar])
+
+            ## Hack
+            class(data) <- 'data.frame'
+            data <- data[!(data[, GroupVar] %in% Dropping), ]
+            data <- group_by_(data, .dots = GroupVar)
+            ## End Hack
+
+            if (!isTRUE(keepInvalid)){
+                message(paste0('\nWarning: the following groups have ', Minimum,
+                        ' or fewer observations.',
+                        '\nNo valid lag/lead can be created, so they are dropped:\n'))
+                message(paste(Dropping, collapse = "\n"))
+            }
+            else if (isTRUE(keepInvalid)){
+                message(paste0('\nWarning: the following groups have ', Minimum,
+                        ' or fewer observations.',
+                        '\n  No valid lag/lead can be created.',
+                        '\n  NA will be returned for these observations in the new lag/lead variable.',
+                        '\n  They will be returned at the bottom of the data frame.\n'))
+                message(paste(Dropping, collapse = "\n"))
+            }
+        }
     }
 
     # Create lags/leads
@@ -121,9 +163,14 @@ slide <- function(data, Var, GroupVar = NULL, NewVar = NULL, slideBy = -1,
                                  Var, ",", slideBy, ", reminder = FALSE))")))
         data[, NewVar] <- vars$NewVarX
     }
-    data <- ungroup(data)
-    class(data) <- 'data.frame'
-    return(data)
+    if (isTRUE(keepInvalid) & !is.null(FullData)){
+        invalid <- FullData[(FullData[, GroupVar] %in% Dropping), ]
+        invalid[, NewVar] <- NA
+        data <- rbind(data, invalid)
+    }
+   data <- ungroup(data)
+   class(data) <- 'data.frame'
+   return(data)
 }
 
 #' A function for creating lag and lead variables.
@@ -496,7 +543,7 @@ StartEnd <- function(data, SpellVar = NULL, GroupVar = NULL, SpellValue = NULL,
 #' \code{CountSpell} is a function that returns a variable counting the spell
 #' number for an observation. Works with grouped data.
 #' @param data a data frame object.
-#' @param TimeVar a charachter string naming the time variable.
+#' @param TimeVar a character string naming the time variable.
 #' @param SpellVar a character string naming the variable with information on
 #' when each spell starts.
 #' @param GroupVar a character string naming the variable grouping the units
