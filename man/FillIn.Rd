@@ -4,7 +4,7 @@
 \title{A function for filling in missing values of a variable from one data frame
 with the values from another variable.}
 \usage{
-FillIn(D1, D2, Var1 = NULL, Var2 = NULL, KeyVar = c("iso2c", "year"),
+FillIn(D1, D2, Var1, Var2, KeyVar = c("iso2c", "year"),
   allow.cartesian = FALSE, KeepD2Vars = FALSE)
 }
 \arguments{

@@ -1,8 +1,8 @@
-b5aa4d6bcb7eff1f2fce060278ced101 *DESCRIPTION
+f13cae42bd1e3b9579ad7043934a30fa *DESCRIPTION
 0e1ce44d25b68bbc1d946770c1497318 *NAMESPACE
-e51fb4c226921bfe4a54930634c7ace1 *NEWS
+3b18a8e4f0fb6934fe6747b7babfcaa7 *NEWS
 0723ebe8815ce338fe0871f5879a1ee5 *R/DropNA.R
-1751cbd8d95e960c78b02c3cc6cd1590 *R/FillIn.R
+8cb1273a7438a1ab722760b04977a279 *R/FillIn.R
 f94b40c26ab9cd7b831b47dc4df201cb *R/MoveFront.R
 189f3f8dae8eadfc3fa268d12a99bcb7 *R/PercChange.R
 2358e5d1de49102928e3eb2893d450af *R/TimeFill.R
@@ -13,7 +13,7 @@ b3ca086ab7b1e27ca392274e7e7402f9 *README.md
 c8205fbd409b5e1cb5065bfd33d21c6b *man/CountSpell.Rd
 9bf81e73bb105f20396fd1f3d60c0e23 *man/DropNA.Rd
 b197a1f4d23fd879bb6e054849708978 *man/FillDown.Rd
-e7d2ce835a3a0437ea5df7573a4bdc3b *man/FillIn.Rd
+2458c73914f1cba55a9aa9791a6c315b *man/FillIn.Rd
 6f4d01e78213c6bb21a736778ff31b79 *man/FindReplace.Rd
 8f255fac8f1b9ba241ba7a39a57ff199 *man/InsertRow.Rd
 74507aa1fba0b71bde4801c464c9157c *man/MoveFront.Rd
