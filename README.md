@@ -3,7 +3,7 @@ DataCombine
 
 Christopher Gandrud
 
-Version 0.2.7
+Version 0.2.8.3
 [![Build Status](https://travis-ci.org/christophergandrud/DataCombine.png)](https://travis-ci.org/christophergandrud/DataCombine)
 
 Please report any **bugs** or **suggestions** at:
@@ -24,7 +24,7 @@ for an observation. Works with grouped data.
 - `DropNA`: drops rows from a data frame when they have missing (`NA`) values on a
 given variable(s).
 
-- `FillDown`: fills in missing (`NA`) values with the previous on-missing value
+- `FillDown`: fills in missing (`NA`) values with the previous non-missing value
 
 - `FillIn`: fills in missing values of a variable from one data frame with the
 values from another variable.
@@ -68,6 +68,9 @@ for time-series cross-sectional data.
 
 - `rmExcept`: removes all objects from a workspace except those specified by the
 user.
+
+- `TimeExpand`: expands a data set so that it includes an observation for each
+time point in a sequence. Works with grouped data.
 
 - `TimeFill`: creates a continuous `Unit`-`Time`-`Dummy` data frame from a data
 frame with `Unit`-`Start`-`End` times.

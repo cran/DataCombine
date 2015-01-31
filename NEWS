@@ -1,3 +1,31 @@
+## Version 0.2.8.3
+
+Minor change to `PercChange` allowing arguments to be passed to `slide`.
+
+Minor internal code improvements.
+
+## Version 0.2.8.2
+
+`FillDown` down accepts just vectors. This is useful when used with dplyr's
+`group_by` and `mutate`/`summarize` functions.
+
+## Version 0.2.8.1
+
+Added `TimeVar` argument to `slide`. The argument is optional. When the
+argument is specified, then the data is ordered by `Var`-`TimeVar` before
+sliding.
+
+- Internal code improvements.
+
+## Version 0.2.8
+
+Added function `TimeExpand`. This expands a data set so that it includes an
+observation for each time point in a sequence. Works with grouped data.
+
+## Version 0.2.7.2
+
+- Error message added to `slide` when using grouped data.
+
 ## Version 0.2.7.1
 
 Added dplyr version depedency >= 0.3.
@@ -19,8 +47,8 @@ Sascha Schuster.
 
 ### Version 0.2.4
 
-- Added `FillDown` a function that fills in missing (NA) values with the previous
-on-missing value.
+- Added `FillDown` a function that fills in missing (NA) values with the
+previous non-missing value.
 
 - Internal code formating improvements.
 
