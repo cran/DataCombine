@@ -63,7 +63,7 @@
 #' \url{http://ctszkin.com/2012/03/11/generating-a-laglead-variables/}
 #'
 #'
-#' @importFrom dplyr group_by group_by_ summarize mutate ungroup
+#' @importFrom dplyr group_by group_by_ summarize mutate ungroup %>%
 #' @export
 
 slide <- function(data, Var, TimeVar, GroupVar, NewVar,
@@ -124,7 +124,7 @@ slide <- function(data, Var, TimeVar, GroupVar, NewVar,
         data$fake <- 1
         Minimum <- abs(slideBy) - 1
         Summed <- dplyr::mutate(data, total = sum(fake))
-        SubSummed <- subset(Summed, total <= Minimum)
+        SubSummed <- subset(Summed, total <= Minimum) %>% data.frame()
         data <- VarDrop(data, 'fake')
         if (nrow(SubSummed) == 0) {
             FullData <- NULL
@@ -148,6 +148,7 @@ slide <- function(data, Var, TimeVar, GroupVar, NewVar,
                         ' or fewer observations.',
                         '\nNo valid lag/lead can be created, so they are dropped:\n'))
                 message(paste(Dropping, collapse = "\n"))
+                message('\n')
             }
             else if (isTRUE(keepInvalid)){
                 message(paste0('\nWarning: the following groups have ', Minimum,
@@ -156,6 +157,7 @@ slide <- function(data, Var, TimeVar, GroupVar, NewVar,
                         '\n  NA will be returned for these observations in the new lag/lead variable.',
                         '\n  They will be returned at the bottom of the data frame.\n'))
                 message(paste(Dropping, collapse = "\n"))
+                message('\n')
             }
         }
     }
@@ -166,11 +168,13 @@ slide <- function(data, Var, TimeVar, GroupVar, NewVar,
                                 reminder = FALSE)
     }
     else if (!missing(GroupVar)){
-        DataSub <- eval(parse(text = paste0('group_by(data[, c(GroupVar, Var)], ',
-                                            GroupVar,')')))
-        vars <- eval(parse(text = paste0("dplyr::mutate(DataSub, NewVarX = shift(",
-                                 Var, ",", slideBy, ", reminder = FALSE))")))
-        data[, NewVar] <- vars$NewVarX
+            DataSub <- eval(parse(text =
+                            paste0('group_by(data[, c(GroupVar, Var)], ',
+                                    GroupVar,')')))
+            vars <- eval(parse(text =
+                            paste0('dplyr::mutate(DataSub, NewVarX = shift(',
+                                    Var, ',', slideBy, ', reminder = FALSE))')))
+            data[, NewVar] <- vars$NewVarX
     }
     if (isTRUE(keepInvalid) & !is.null(FullData)){
         invalid <- FullData[(FullData[, GroupVar] %in% Dropping), ]
@@ -217,9 +221,7 @@ shift <- function(VarVect, shiftBy, reminder = TRUE){
                     'in time order before running shift.'))
     }
 
-
-    if (length(shiftBy) > 1)
-    return(sapply(shiftBy, shift, Var = VarVect))
+    if (length(shiftBy) > 1) return(sapply(shiftBy, shift, Var = VarVect))
 
     out <- NULL
     abs_shiftBy = abs(shiftBy)
@@ -242,10 +244,10 @@ shift <- function(VarVect, shiftBy, reminder = TRUE){
 #' the lag/lead moving averages from.
 #' @param GroupVar a character string naming the variable grouping the units
 #' within which \code{Var} will be turned into slid moving averages. If
-#' \code{GroupVar} is missing then the whole variable is slid up or down and moving
-#' averages will be created. This is similar to \code{\link{shift}}, though
-#' \code{shift} returns the slid data to a new vector rather than the original
-#' data frame.
+#' \code{GroupVar} is missing then the whole variable is slid up or down and
+#' moving averages will be created. This is similar to \code{\link{shift}},
+#' though \code{shift} returns the slid data to a new vector rather than the
+#' original data frame.
 #' @param periodBound integer. The time point for the outer bound of the time
 #' period over which to create the moving averages. The default is \code{-3},
 #' i.e. the moving average period begins three time points before a given time
@@ -295,7 +297,8 @@ slideMA <- function(data, Var, GroupVar, periodBound = -3, offset = 1,
                     'in time order before running slide.\n'))
     }
         if (!missing(GroupVar)){
-            message(paste('\nRemember to order', deparse(substitute(data)), 'by',
+            message(paste('\nRemember to order', deparse(substitute(data)),
+                    'by',
                     GroupVar, 'and the time variable before running slide.\n'))
         }
     }
@@ -324,11 +327,13 @@ slideMA <- function(data, Var, GroupVar, periodBound = -3, offset = 1,
         data[, NewVar] <- shiftMA(data[, Var], shiftBy = slideBy,
                                   Abs = Abs, reminder = FALSE)
     } else if (!missing(GroupVar)){
-        DataSub <- eval(parse(text = paste0('group_by(data[, c(GroupVar, Var)], ',
+        DataSub <- eval(parse(text =
+                            paste0('group_by(data[, c(GroupVar, Var)], ',
                             GroupVar,')')))
-        vars <- eval(parse(text = paste0("dplyr::mutate(DataSub, NewVarX = shiftMA(",
-                                    Var, ", shiftBy =", slideBy, ", Abs = ",
-                                    Abs, ", reminder = FALSE))")))
+        vars <- eval(parse(text =
+                            paste0("dplyr::mutate(DataSub, NewVarX = shiftMA(",
+                            Var, ", shiftBy =", slideBy, ", Abs = ",
+                            Abs, ", reminder = FALSE))")))
         data[, NewVar] <- vars$NewVarX
         data <- data.frame(data)
     }
