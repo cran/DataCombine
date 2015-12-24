@@ -3,8 +3,9 @@ DataCombine
 
 Christopher Gandrud
 
-Version 0.2.9
-[![Build Status](https://travis-ci.org/christophergandrud/DataCombine.png)](https://travis-ci.org/christophergandrud/DataCombine)
+Version 0.2.18
+[![Build Status](https://travis-ci.org/christophergandrud/DataCombine.png)](https://travis-ci.org/christophergandrud/DataCombine)[![CRAN Version](http://www.r-pkg.org/badges/version/DataCombine)](http://cran.r-project.org/package=DataCombine)![CRAN Downloads](http://cranlogs.r-pkg.org/badges/last-month/DataCombine)
+
 
 Please report any **bugs** or **suggestions** at:
 <https://github.com/christophergandrud/DataCombine/issues>.
@@ -15,6 +16,9 @@ Please report any **bugs** or **suggestions** at:
 data sets--especially time-series cross-section data--easier. The package is
 continually being developed as I turn lines of code that I frequently use into
 single functions. It currently includes the following functions:
+
+- `change`: calculates the absolute, percentage, and proportion change from 
+a specified lag, including within groups.
 
 - `CountSpell`: function that returns a variable counting the spell number
 for an observation. Works with grouped data.
@@ -28,6 +32,9 @@ given variable(s).
 
 - `FillIn`: fills in missing values of a variable from one data frame with the
 values from another variable.
+
+- `FindDups`: find duplicated values in a data frame and subset it to either
+include or not include them.
 
 - `FindReplace`: replaces multiple patterns found in a character string column
 of a data frame.
@@ -44,9 +51,6 @@ variables to the front.
 
 - `NaVar`: create new variable(s) indicating if there are missing values in
 other variable(s).
-
-- `PercChange`: calculates the percentage change from a specified lag, including
-within groups.
 
 - `shift`: creates lag and lead variables, including for time-series
 cross-sectional data. The shifted variable is returned to a new vector. This
