@@ -1,3 +1,11 @@
+## Version 0.2.19
+
+- Fixed a bug in `dMerge` that overwrote users `suffixes` specification. 
+Thanks to @hplieninger for spotting this.
+
+- `FillIn` intelligently fails if `Var1` and `Var2` do not exist in their 
+respective data.frames.
+
 ## Version 0.2.18
 
 - `SpreadDummy` now starts by coercing the `data` to a data frame, so that it
