@@ -1,3 +1,12 @@
+## Version 0.2.20
+
+- Internal changes to enable compatability with dplyr version 0.4.4.
+
+- The `Var` argument in `dMerge` is deprecated. Use `by` instead to match 
+`merge` syntax more closely.
+
+- `DropNA` drops all NAs from the supplied data frame if `Var` is missing. 
+
 ## Version 0.2.19
 
 - Fixed a bug in `dMerge` that overwrote users `suffixes` specification. 
